@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login - BPS Maluku Barat Daya</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="portal-container">
+        <div class="portal-card">
+            <h1 class="portal-title">Admin Panel</h1>
+            <p class="portal-subtitle">Masuk untuk mengakses dashboard admin</p>
+
+            <div id="alertContainer"></div>
+
+            <form id="adminLoginForm">
+                <div class="form-group">
+                    <label class="form-label" for="adminEmail">Email</label>
+                    <input 
+                        type="email" 
+                        id="adminEmail" 
+                        class="form-input" 
+                        placeholder="admin@bps.go.id" 
+                        required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="adminPassword">Password</label>
+                    <input 
+                        type="password" 
+                        id="adminPassword" 
+                        class="form-input" 
+                        placeholder="Masukkan password" 
+                        required>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-full">
+                    Masuk
+                </button>
+            </form>
+
+            <div style="margin-top: 20px; text-align: center;">
+                <a href="index.html" style="color: #2563eb; text-decoration: none; font-size: 14px;">← Kembali ke Halaman Utama</a>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="admin-login.js"></script>
+</body>
+</html>

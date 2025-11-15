@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal Tes - BPS Maluku Barat Daya</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="portal-container">
+        <div class="portal-card">
+            <h1 class="portal-title">Portal Tes</h1>
+            <p class="portal-subtitle">Masukkan kode undangan Anda untuk memulai tes</p>
+
+            <div id="alertContainer"></div>
+
+            <form id="accessForm">
+                <div class="form-group">
+                    <label class="form-label" for="invitationCode">Kode Undangan</label>
+                    <input 
+                        type="text" 
+                        id="invitationCode" 
+                        class="form-input" 
+                        placeholder="Contoh: MITRA-001" 
+                        required
+                        autocomplete="off">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="participantName">Nama Lengkap</label>
+                    <input 
+                        type="text" 
+                        id="participantName" 
+                        class="form-input" 
+                        placeholder="Masukkan nama lengkap Anda" 
+                        required>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-full">
+                    <span id="btnText">Mulai Tes</span>
+                    <div class="spinner hidden" id="btnSpinner"></div>
+                </button>
+            </form>
+
+            <div style="margin-top: 20px; text-align: center;">
+                <a href="index.html" style="color: #2563eb; text-decoration: none; font-size: 14px;">← Kembali ke Halaman Utama</a>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="test-portal.js"></script>
+</body>
+</html>

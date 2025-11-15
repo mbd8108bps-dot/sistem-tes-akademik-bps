@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tes Akademik - BPS Maluku Barat Daya</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body style="background-color: #f9fafb;">
+    <div class="test-container">
+        <!-- Test Header -->
+        <div class="test-header">
+            <div class="timer" id="timer">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+                    <path d="M12 6V12L16 14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                <span id="timerDisplay">60:00</span>
+            </div>
+            <div class="progress-info">
+                <span id="progressText">Soal 1 dari 30</span>
+            </div>
+        </div>
+
+        <!-- Question Navigator (Kotak Nomor Soal) -->
+        <div class="question-navigator">
+            <div class="navigator-title">Navigasi Soal</div>
+            <div class="navigator-grid" id="navigatorGrid">
+                <!-- Akan di-generate oleh JavaScript -->
+            </div>
+        </div>
+
+        <!-- Question Card -->
+        <div class="question-card">
+            <div class="question-number" id="questionNumber">Pertanyaan 1</div>
+            <div class="question-text" id="questionText">Loading...</div>
+
+            <ul class="options-list" id="optionsList">
+                <!-- Options will be loaded here -->
+            </ul>
+        </div>
+
+        <!-- Navigation Buttons -->
+        <div class="navigation-buttons">
+            <button class="btn btn-outline" id="prevBtn" onclick="previousQuestion()" disabled>
+                ← Sebelumnya
+            </button>
+            <button class="btn btn-primary" id="nextBtn" onclick="nextQuestion()">
+                Selanjutnya →
+            </button>
+            <button class="btn btn-submit hidden" id="submitBtn" onclick="submitTest()">
+                Submit Tes
+            </button>
+        </div>
+    </div>
+
+    <script type="module" src="test-interface.js"></script>
+</body>
+</html>

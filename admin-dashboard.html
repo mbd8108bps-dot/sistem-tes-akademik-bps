@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - BPS</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body style="background-color: #f9fafb;">
+    <div class="dashboard-header">
+        <div class="container">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <h1 class="dashboard-title">Dashboard Admin</h1>
+                    <p class="dashboard-subtitle">Monitoring rekrutmen mitra BPS Kabupaten Maluku Barat Daya</p>
+                </div>
+                <button class="btn btn-outline" id="logoutBtn" onclick="logout()">Logout</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="container" style="padding: 40px 20px;">
+        <!-- Statistik Cards -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-label">Total Peserta</div>
+                <div class="stat-value" id="totalParticipants">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Sudah Mengerjakan</div>
+                <div class="stat-value" id="completedTests">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Belum Mengerjakan</div>
+                <div class="stat-value" id="incompleteTests">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Rata-rata Skor</div>
+                <div class="stat-value" id="averageScore">0%</div>
+            </div>
+        </div>
+
+        <!-- Action Button (hanya Export) -->
+        <div style="margin: 40px 0;">
+            <button class="btn btn-primary" onclick="exportData()">📥 Export Data CSV</button>
+        </div>
+
+        <!-- Top 3 Podium -->
+        <div style="background: white; padding: 40px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 40px;">
+            <h2 style="font-size: 24px; font-weight: 700; margin-bottom: 30px; text-align: center;">🏆 Top 3 Peserta Terbaik</h2>
+            <div id="podiumContainer" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
+                <!-- Podium will be inserted here -->
+            </div>
+        </div>
+
+        <!-- Top 10 Leaderboard -->
+        <div class="data-table" style="margin-bottom: 40px;">
+            <div class="table-header">
+                <h2 class="table-title">🥇 Top 10 Peserta</h2>
+            </div>
+            <div style="overflow-x: auto;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>PERINGKAT</th>
+                            <th>NAMA PESERTA</th>
+                            <th>SKOR</th>
+                            <th>BENAR/TOTAL</th>
+                            <th>WAKTU MULAI</th>
+                            <th>DURASI (MENIT)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="leaderboardTable">
+                        <!-- Top 10 will be inserted here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Daftar Peserta -->
+        <div class="data-table">
+            <div class="table-header">
+                <h2 class="table-title">📋 Daftar Peserta</h2>
+            </div>
+            <div style="overflow-x: auto;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>KODE UNDANGAN</th>
+                            <th>NAMA PESERTA</th>
+                            <th>STATUS</th>
+                            <th>SKOR</th>
+                            <th>WAKTU MULAI</th>
+                            <th>WAKTU SELESAI</th>
+                            <th>DURASI</th>
+                            <th>AKSI</th>
+                        </tr>
+                    </thead>
+                    <tbody id="participantsTable">
+                        <!-- Data will be inserted here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="admin-dashboard.js"></script>
+</body>
+</html>
