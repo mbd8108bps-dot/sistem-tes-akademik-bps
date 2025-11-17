@@ -3,51 +3,157 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portal Tes - BPS Maluku Barat Daya</title>
+    <title>Portal Tes - BPS</title>
     <link rel="stylesheet" href="styles.css">
+    <style>
+        .locked-message {
+            background: #fee2e2;
+            border: 2px solid #ef4444;
+            border-radius: 12px;
+            padding: 30px;
+            text-align: center;
+            max-width: 500px;
+            margin: 50px auto;
+        }
+
+        .locked-message .lock-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+
+        .locked-message h2 {
+            color: #991b1b;
+            font-size: 24px;
+            margin-bottom: 15px;
+        }
+
+        .locked-message p {
+            color: #7f1d1d;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+
+        .countdown-display {
+            background: white;
+            border: 2px solid #ef4444;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px auto;
+            font-size: 32px;
+            font-weight: bold;
+            color: #ef4444;
+            font-family: 'Courier New', monospace;
+            max-width: 400px;
+        }
+    </style>
 </head>
-<body>
-    <div class="portal-container">
-        <div class="portal-card">
-            <h1 class="portal-title">Portal Tes</h1>
-            <p class="portal-subtitle">Masukkan kode undangan Anda untuk memulai tes</p>
+<body style="background-color: #f9fafb;">
+    <div id="locked-container" style="display: none;">
+        <div class="locked-message">
+            <div class="lock-icon">🔐</div>
+            <h2>Portal Tes Belum Dibuka</h2>
+            <p>Maaf, test akademik belum dimulai.</p>
+            <p>Waktu pembukaan:</p>
+            <div class="countdown-display" id="countdown">--:--:--</div>
+            <p style="margin-top: 20px; font-size: 14px;">
+                <strong id="launch-time">18 November 2025 - 08:00 WIT</strong>
+            </p>
+            <p style="margin-top: 20px; font-size: 13px; color: #9ca3af;">
+                Silakan kembali lagi pada waktu yang ditentukan.
+            </p>
+        </div>
+    </div>
 
-            <div id="alertContainer"></div>
+    <div id="portal-container">
+        <!-- ISI PORTAL TEST ASLI -->
+        <div class="dashboard-header">
+            <div class="container">
+                <h1 class="dashboard-title">Portal Tes Akademik</h1>
+                <p class="dashboard-subtitle">BPS Kabupaten Maluku Barat Daya</p>
+            </div>
+        </div>
 
-            <form id="accessForm">
-                <div class="form-group">
-                    <label class="form-label" for="invitationCode">Kode Undangan</label>
-                    <input 
-                        type="text" 
-                        id="invitationCode" 
-                        class="form-input" 
-                        placeholder="Contoh: MITRA-001" 
-                        required
-                        autocomplete="off">
-                </div>
+        <div class="container" style="padding: 40px 20px; max-width: 600px; margin: 0 auto;">
+            <div style="background: white; padding: 40px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+                <h2 style="font-size: 24px; margin-bottom: 30px; text-align: center;">Login untuk Mengerjakan Tes</h2>
 
-                <div class="form-group">
-                    <label class="form-label" for="participantName">Nama Lengkap</label>
-                    <input 
-                        type="text" 
-                        id="participantName" 
-                        class="form-input" 
-                        placeholder="Masukkan nama lengkap Anda" 
-                        required>
-                </div>
+                <form id="testForm">
+                    <div style="margin-bottom: 20px;">
+                        <label for="code" style="display: block; margin-bottom: 8px; font-weight: 600;">Kode Undangan:</label>
+                        <input type="text" id="code" placeholder="MITRA-ABC" required style="width: 100%; padding: 12px; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 16px;">
+                    </div>
 
-                <button type="submit" class="btn btn-primary btn-full">
-                    <span id="btnText">Mulai Tes</span>
-                    <div class="spinner hidden" id="btnSpinner"></div>
-                </button>
-            </form>
+                    <div style="margin-bottom: 20px;">
+                        <label for="name" style="display: block; margin-bottom: 8px; font-weight: 600;">Nama Lengkap:</label>
+                        <input type="text" id="name" placeholder="Nama Anda" required style="width: 100%; padding: 12px; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 16px;">
+                    </div>
 
-            <div style="margin-top: 20px; text-align: center;">
-                <a href="index.html" style="color: #2563eb; text-decoration: none; font-size: 14px;">← Kembali ke Halaman Utama</a>
+                    <button type="submit" style="width: 100%; padding: 14px; background: #2563eb; color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; margin-top: 20px;">
+                        Mulai Tes
+                    </button>
+                </form>
             </div>
         </div>
     </div>
 
-    <script type="module" src="test-portal.js"></script>
+    <script>
+        // ===== KONFIGURASI JADWAL =====
+        // UBAH INI SESUAI JAM PEMBUKAAN TEST ANDA!
+        const LAUNCH_TIME = new Date('2025-11-18T08:00:00+08:00');
+
+        // Function untuk check apakah sudah waktunya
+        function checkSchedule() {
+            const now = new Date();
+            const lockedContainer = document.getElementById('locked-container');
+            const portalContainer = document.getElementById('portal-container');
+
+            if (now < LAUNCH_TIME) {
+                // Belum waktunya - tampilkan pesan terkunci
+                lockedContainer.style.display = 'block';
+                portalContainer.style.display = 'none';
+                updateCountdown();
+                setInterval(updateCountdown, 1000);
+            } else {
+                // Sudah waktunya - tampilkan portal
+                lockedContainer.style.display = 'none';
+                portalContainer.style.display = 'block';
+                setupPortal();
+            }
+        }
+
+        // Update countdown timer
+        function updateCountdown() {
+            const now = new Date();
+            const diff = LAUNCH_TIME - now;
+
+            if (diff <= 0) {
+                // Waktu sudah tercapai, reload halaman
+                location.reload();
+                return;
+            }
+
+            const hours = Math.floor(diff / (1000 * 60 * 60));
+            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+            const countdownEl = document.getElementById('countdown');
+            countdownEl.textContent = 
+                String(hours).padStart(2, '0') + ':' +
+                String(minutes).padStart(2, '0') + ':' +
+                String(seconds).padStart(2, '0');
+        }
+
+        // Setup portal (kode original)
+        function setupPortal() {
+            // Masukkan kode asli dari test-portal.js di sini
+            // Atau import dari file terpisah
+        }
+
+        // Jalankan schedule check saat halaman load
+        document.addEventListener('DOMContentLoaded', checkSchedule);
+    </script>
+
+    <!-- SCRIPT PORTAL ASLI -->
+    <script type="module" src="test-portal-logic.js"></script>
 </body>
 </html>
