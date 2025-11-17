@@ -42,7 +42,7 @@
 
         .grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 25px;
             margin-bottom: 40px;
         }
@@ -53,26 +53,58 @@
             border-radius: 12px;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
             border-left: 4px solid #2563eb;
+            transition: transform 0.2s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
 
         .stat-card h3 {
             color: #666;
-            font-size: 14px;
-            margin-bottom: 10px;
+            font-size: 13px;
+            margin-bottom: 12px;
             text-transform: uppercase;
             letter-spacing: 0.5px;
+            font-weight: 600;
         }
 
         .stat-card .value {
-            font-size: 32px;
+            font-size: 36px;
             font-weight: 700;
             color: #2563eb;
+            margin-bottom: 8px;
         }
 
-        .stat-card .change {
+        .stat-card .label {
             font-size: 12px;
-            color: #888;
-            margin-top: 8px;
+            color: #999;
+        }
+
+        /* Color variants */
+        .stat-card.completed {
+            border-left-color: #10b981;
+        }
+
+        .stat-card.completed .value {
+            color: #10b981;
+        }
+
+        .stat-card.pending {
+            border-left-color: #f59e0b;
+        }
+
+        .stat-card.pending .value {
+            color: #f59e0b;
+        }
+
+        .stat-card.average {
+            border-left-color: #8b5cf6;
+        }
+
+        .stat-card.average .value {
+            color: #8b5cf6;
         }
 
         .section-title {
@@ -96,9 +128,10 @@
             display: flex;
             justify-content: center;
             align-items: flex-end;
-            gap: 20px;
+            gap: 30px;
             margin-top: 40px;
-            height: 300px;
+            height: 350px;
+            flex-wrap: wrap;
         }
 
         .podium-item {
@@ -106,18 +139,20 @@
             flex-direction: column;
             align-items: center;
             justify-content: flex-end;
-            flex: 1;
-            max-width: 150px;
+            flex: 0 1 140px;
+            position: relative;
         }
 
-        .podium-item.second {
-            height: 60%;
+        .podium-item.rank-2 {
+            order: 1;
+            height: 55%;
             background: linear-gradient(135deg, #a78bfa 0%, #8b5cf6 100%);
             border-radius: 8px 8px 0 0;
             padding-bottom: 20px;
         }
 
-        .podium-item.first {
+        .podium-item.rank-1 {
+            order: 2;
             height: 100%;
             background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
             border-radius: 8px 8px 0 0;
@@ -125,7 +160,8 @@
             box-shadow: 0 8px 20px rgba(245, 158, 11, 0.3);
         }
 
-        .podium-item.third {
+        .podium-item.rank-3 {
+            order: 3;
             height: 40%;
             background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
             border-radius: 8px 8px 0 0;
@@ -169,12 +205,6 @@
 
         .leaderboard-item:hover {
             background: #f9fafb;
-        }
-
-        .leaderboard-item:first-child {
-            background: #f0f9ff;
-            border-left: 4px solid #2563eb;
-            font-weight: 600;
         }
 
         .rank {
@@ -228,27 +258,27 @@
     </div>
 
     <div class="container">
-        <!-- Statistics -->
+        <!-- Statistics - 4 Cards -->
         <div class="grid">
             <div class="stat-card">
-                <h3>Total Peserta</h3>
+                <h3>👥 Total Peserta</h3>
                 <div class="value" id="stat-total-peserta">-</div>
-                <div class="change" id="change-peserta"></div>
+                <div class="label">Dari invitation codes</div>
             </div>
-            <div class="stat-card">
-                <h3>Sudah Test</h3>
+            <div class="stat-card completed">
+                <h3>✅ Sudah Selesai</h3>
                 <div class="value" id="stat-completed">-</div>
-                <div class="change" id="change-completed"></div>
+                <div class="label">Menyelesaikan test</div>
             </div>
-            <div class="stat-card">
-                <h3>Belum Test</h3>
+            <div class="stat-card pending">
+                <h3>⏳ Belum Selesai</h3>
                 <div class="value" id="stat-pending">-</div>
-                <div class="change" id="change-pending"></div>
+                <div class="label">Masih menunggu</div>
             </div>
-            <div class="stat-card">
-                <h3>Rata-rata Score</h3>
+            <div class="stat-card average">
+                <h3>📈 Rata-rata Score</h3>
                 <div class="value" id="stat-average">-</div>
-                <div class="change" id="change-average"></div>
+                <div class="label">Dari test selesai</div>
             </div>
         </div>
 
@@ -278,9 +308,10 @@
         // ===== CONFIG SUPABASE =====
         const SUPABASE_URL = 'https://gnlyqkvyltbnpqtbqzkn.supabase.co'; // https://xxx.supabase.co
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdubHlxa3Z5bHRibnBxdGJxemtuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjMxODY3NjEsImV4cCI6MjA3ODc2Mjc2MX0.ImWXF3Whbo8vaGyDDEx77t75eulh-zVVRJjyeKmHSVQ'; // eyJ...
+       
         const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        // Helper: Format score (0-100, bukan persentase)
+        // Format score (0-100)
         function formatScore(score) {
             return Math.round(score);
         }
@@ -288,61 +319,80 @@
         // Get statistics
         async function getStatistics() {
             try {
-                const { count: totalPeserta } = await supabase
+                // 1. Total peserta dari invitation_codes
+                const { count: totalPeserta, error: err1 } = await supabase
                     .from('invitation_codes')
                     .select('*', { count: 'exact', head: true });
 
-                const { data: completed, count: countCompleted } = await supabase
-                    .from('test_sessions')
-                    .select('*', { count: 'exact' })
-                    .not('completed_at', 'is', null);
-
-                const pending = totalPeserta - countCompleted;
-
-                let avgScore = 0;
-                if (completed && completed.length > 0) {
-                    const total = completed.reduce((sum, item) => sum + item.score, 0);
-                    avgScore = total / completed.length;
+                if (err1) {
+                    console.error('Error total peserta:', err1);
+                    return;
                 }
 
+                // 2. Peserta sudah selesai dari test_sessions
+                const { data: completed, count: countCompleted, error: err2 } = await supabase
+                    .from('test_sessions')
+                    .select('score', { count: 'exact' });
+
+                if (err2) {
+                    console.error('Error completed:', err2);
+                    return;
+                }
+
+                // 3. Hitung peserta belum selesai
+                const pending = (totalPeserta || 0) - (countCompleted || 0);
+
+                // 4. Rata-rata score
+                let avgScore = 0;
+                if (completed && completed.length > 0) {
+                    const sum = completed.reduce((acc, item) => acc + (item.score || 0), 0);
+                    avgScore = sum / completed.length;
+                }
+
+                // Update UI
                 document.getElementById('stat-total-peserta').textContent = totalPeserta || 0;
                 document.getElementById('stat-completed').textContent = countCompleted || 0;
                 document.getElementById('stat-pending').textContent = pending || 0;
                 document.getElementById('stat-average').textContent = formatScore(avgScore);
 
+                console.log('Stats:', { totalPeserta, countCompleted, pending, avgScore });
+
             } catch (error) {
-                console.error('Error getting statistics:', error);
+                console.error('Statistics exception:', error);
             }
         }
 
-        // Get Top 3 (Podium) - Sort by score, bukan by time
+        // Get Top 3 Podium
         async function getPodium() {
             try {
                 const { data, error } = await supabase
                     .from('test_sessions')
-                    .select('*, invitation_codes!inner(code, participant_name)')
-                    .not('completed_at', 'is', null)
+                    .select('id, participant_name, score')
                     .order('score', { ascending: false })
                     .limit(3);
 
-                if (error) throw error;
+                if (error) {
+                    console.error('Podium error:', error);
+                    document.getElementById('podium').innerHTML = '<div class="empty-state">Error: ' + error.message + '</div>';
+                    return;
+                }
 
                 const podiumContainer = document.getElementById('podium');
 
                 if (!data || data.length === 0) {
-                    podiumContainer.innerHTML = '<div class="empty-state">Belum ada peserta yang menyelesaikan tes</div>';
+                    podiumContainer.innerHTML = '<div class="empty-state">Belum ada data test</div>';
                     return;
                 }
 
                 const trophies = ['🥇', '🥈', '🥉'];
-                const positions = ['first', 'second', 'third'];
+                const rankClasses = ['rank-1', 'rank-2', 'rank-3'];
 
                 let html = '';
                 data.forEach((session, index) => {
-                    const name = session.invitation_codes[0]?.participant_name || 'Anonymous';
+                    const name = session.participant_name || 'Anonymous';
                     const score = formatScore(session.score);
 
-                    html += '<div class="podium-item ' + positions[index] + '">';
+                    html += '<div class="podium-item ' + rankClasses[index] + '">';
                     html += '<div class="trophy">' + trophies[index] + '</div>';
                     html += '<div class="name">' + name + '</div>';
                     html += '<div class="score">' + score + ' poin</div>';
@@ -352,53 +402,53 @@
                 podiumContainer.innerHTML = html;
 
             } catch (error) {
-                console.error('Error getting podium:', error);
-                document.getElementById('podium').innerHTML = '<div class="empty-state">Error loading podium</div>';
+                console.error('Podium exception:', error);
+                document.getElementById('podium').innerHTML = '<div class="empty-state">Error: ' + error.message + '</div>';
             }
         }
 
-        // Get Top 10 Leaderboard - Sort by score, bukan by time
+        // Get Top 10 Leaderboard
         async function getLeaderboard() {
             try {
                 const { data, error } = await supabase
                     .from('test_sessions')
-                    .select('*, invitation_codes!inner(code, participant_name)')
-                    .not('completed_at', 'is', null)
+                    .select('id, participant_name, score, total_questions, start_time')
                     .order('score', { ascending: false })
                     .limit(10);
 
-                if (error) throw error;
+                if (error) {
+                    console.error('Leaderboard error:', error);
+                    document.getElementById('leaderboard').innerHTML = '<div class="empty-state">Error: ' + error.message + '</div>';
+                    return;
+                }
 
                 const leaderboardContainer = document.getElementById('leaderboard');
 
                 if (!data || data.length === 0) {
-                    leaderboardContainer.innerHTML = '<div class="empty-state">Belum ada peserta yang menyelesaikan tes</div>';
+                    leaderboardContainer.innerHTML = '<div class="empty-state">Belum ada data test</div>';
                     return;
                 }
 
                 let html = '';
                 data.forEach((session, index) => {
-                    const name = session.invitation_codes[0]?.participant_name || 'Anonymous';
-                    const code = session.invitation_codes[0]?.code || '-';
+                    const name = session.participant_name || 'Anonymous';
                     const score = formatScore(session.score);
-                    const correct = session.correct_answers || 0;
-                    const total = session.total_questions || 30;
-                    const completedAt = new Date(session.completed_at).toLocaleString('id-ID');
+                    const time = new Date(session.start_time).toLocaleString('id-ID');
 
                     html += '<div class="leaderboard-item">';
                     html += '<div class="rank">#' + (index + 1) + '</div>';
                     html += '<div class="name">' + name + '</div>';
                     html += '<div class="score">' + score + '</div>';
-                    html += '<div class="details">' + correct + '/' + total + '</div>';
-                    html += '<div class="details">' + completedAt + '</div>';
+                    html += '<div class="details">/100</div>';
+                    html += '<div class="details">' + time + '</div>';
                     html += '</div>';
                 });
 
                 leaderboardContainer.innerHTML = html;
 
             } catch (error) {
-                console.error('Error getting leaderboard:', error);
-                document.getElementById('leaderboard').innerHTML = '<div class="empty-state">Error loading leaderboard</div>';
+                console.error('Leaderboard exception:', error);
+                document.getElementById('leaderboard').innerHTML = '<div class="empty-state">Error: ' + error.message + '</div>';
             }
         }
 
