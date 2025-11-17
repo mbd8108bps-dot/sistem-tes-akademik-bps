@@ -3,107 +3,419 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard - BPS</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>Admin Dashboard - Sistem Tes Akademik BPS</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f7fa;
+            color: #333;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+            color: white;
+            padding: 25px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 5px;
+        }
+
+        .header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 30px 20px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            border-left: 4px solid #2563eb;
+        }
+
+        .stat-card h3 {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stat-card .value {
+            font-size: 32px;
+            font-weight: 700;
+            color: #2563eb;
+        }
+
+        .stat-card .change {
+            font-size: 12px;
+            color: #888;
+            margin-top: 8px;
+        }
+
+        .section-title {
+            font-size: 22px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #e5e7eb;
+        }
+
+        .podium-container {
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            margin-bottom: 40px;
+            text-align: center;
+        }
+
+        .podium {
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            gap: 20px;
+            margin-top: 40px;
+            height: 300px;
+        }
+
+        .podium-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-end;
+            flex: 1;
+            max-width: 150px;
+        }
+
+        .podium-item.second {
+            height: 60%;
+            background: linear-gradient(135deg, #a78bfa 0%, #8b5cf6 100%);
+            border-radius: 8px 8px 0 0;
+            padding-bottom: 20px;
+        }
+
+        .podium-item.first {
+            height: 100%;
+            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+            border-radius: 8px 8px 0 0;
+            padding-bottom: 20px;
+            box-shadow: 0 8px 20px rgba(245, 158, 11, 0.3);
+        }
+
+        .podium-item.third {
+            height: 40%;
+            background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+            border-radius: 8px 8px 0 0;
+            padding-bottom: 20px;
+        }
+
+        .podium-item .trophy {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+
+        .podium-item .name {
+            color: white;
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 5px;
+            word-break: break-word;
+        }
+
+        .podium-item .score {
+            color: white;
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .leaderboard {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+        }
+
+        .leaderboard-item {
+            display: grid;
+            grid-template-columns: 50px 1fr 100px 100px 150px;
+            align-items: center;
+            padding: 15px 20px;
+            border-bottom: 1px solid #f0f0f0;
+            gap: 20px;
+        }
+
+        .leaderboard-item:hover {
+            background: #f9fafb;
+        }
+
+        .leaderboard-item:first-child {
+            background: #f0f9ff;
+            border-left: 4px solid #2563eb;
+            font-weight: 600;
+        }
+
+        .rank {
+            font-weight: 700;
+            color: #2563eb;
+            font-size: 16px;
+        }
+
+        .name {
+            font-weight: 500;
+        }
+
+        .score {
+            background: #e0e7ff;
+            color: #1e40af;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .details {
+            color: #888;
+            font-size: 13px;
+        }
+
+        .refresh-info {
+            text-align: center;
+            color: #888;
+            font-size: 12px;
+            margin-top: 20px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #2563eb;
+        }
+    </style>
 </head>
-<body style="background-color: #f9fafb;">
-    <div class="dashboard-header">
-        <div class="container">
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-                <div>
-                    <h1 class="dashboard-title">Dashboard Admin</h1>
-                    <p class="dashboard-subtitle">Monitoring rekrutmen mitra BPS Kabupaten Maluku Barat Daya</p>
-                </div>
-                <button class="btn btn-outline" id="logoutBtn" onclick="logout()">Logout</button>
-            </div>
-        </div>
+<body>
+    <div class="header">
+        <h1>📊 Admin Dashboard</h1>
+        <p>Sistem Tes Akademik BPS - Monitoring Real-time</p>
     </div>
 
-    <div class="container" style="padding: 40px 20px;">
-        <!-- Statistik Cards -->
-        <div class="stats-grid">
+    <div class="container">
+        <!-- Statistics -->
+        <div class="grid">
             <div class="stat-card">
-                <div class="stat-label">Total Peserta</div>
-                <div class="stat-value" id="totalParticipants">0</div>
+                <h3>Total Peserta</h3>
+                <div class="value" id="stat-total-peserta">-</div>
+                <div class="change" id="change-peserta"></div>
             </div>
             <div class="stat-card">
-                <div class="stat-label">Sudah Mengerjakan</div>
-                <div class="stat-value" id="completedTests">0</div>
+                <h3>Sudah Test</h3>
+                <div class="value" id="stat-completed">-</div>
+                <div class="change" id="change-completed"></div>
             </div>
             <div class="stat-card">
-                <div class="stat-label">Belum Mengerjakan</div>
-                <div class="stat-value" id="incompleteTests">0</div>
+                <h3>Belum Test</h3>
+                <div class="value" id="stat-pending">-</div>
+                <div class="change" id="change-pending"></div>
             </div>
             <div class="stat-card">
-                <div class="stat-label">Rata-rata Skor</div>
-                <div class="stat-value" id="averageScore">0%</div>
+                <h3>Rata-rata Score</h3>
+                <div class="value" id="stat-average">-</div>
+                <div class="change" id="change-average"></div>
             </div>
         </div>
 
-        <!-- Action Button (hanya Export) -->
-        <div style="margin: 40px 0;">
-            <button class="btn btn-primary" onclick="exportData()">📥 Export Data CSV</button>
-        </div>
-
-        <!-- Top 3 Podium -->
-        <div style="background: white; padding: 40px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 40px;">
-            <h2 style="font-size: 24px; font-weight: 700; margin-bottom: 30px; text-align: center;">🏆 Top 3 Peserta Terbaik</h2>
-            <div id="podiumContainer" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
-                <!-- Podium will be inserted here -->
+        <!-- Podium Top 3 -->
+        <div class="podium-container">
+            <h2 class="section-title">🏆 Podium Juara</h2>
+            <div class="podium" id="podium">
+                <div class="loading">Loading...</div>
             </div>
         </div>
 
         <!-- Top 10 Leaderboard -->
-        <div class="data-table" style="margin-bottom: 40px;">
-            <div class="table-header">
-                <h2 class="table-title">🥇 Top 10 Peserta</h2>
+        <div>
+            <h2 class="section-title">📈 Top 10 Leaderboard</h2>
+            <div class="leaderboard" id="leaderboard">
+                <div class="loading">Loading...</div>
             </div>
-            <div style="overflow-x: auto;">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>PERINGKAT</th>
-                            <th>NAMA PESERTA</th>
-                            <th>SKOR</th>
-                            <th>BENAR/TOTAL</th>
-                            <th>WAKTU MULAI</th>
-                            <th>DURASI (MENIT)</th>
-                        </tr>
-                    </thead>
-                    <tbody id="leaderboardTable">
-                        <!-- Top 10 will be inserted here -->
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-        <!-- Daftar Peserta -->
-        <div class="data-table">
-            <div class="table-header">
-                <h2 class="table-title">📋 Daftar Peserta</h2>
-            </div>
-            <div style="overflow-x: auto;">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>KODE UNDANGAN</th>
-                            <th>NAMA PESERTA</th>
-                            <th>STATUS</th>
-                            <th>SKOR</th>
-                            <th>WAKTU MULAI</th>
-                            <th>WAKTU SELESAI</th>
-                            <th>DURASI</th>
-                            <th>AKSI</th>
-                        </tr>
-                    </thead>
-                    <tbody id="participantsTable">
-                        <!-- Data will be inserted here -->
-                    </tbody>
-                </table>
+            <div class="refresh-info">
+                ✓ Data diperbarui otomatis setiap 10 detik
             </div>
         </div>
     </div>
 
-    <script type="module" src="admin-dashboard.js"></script>
+    <script type="module">
+        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
+
+        // ===== CONFIG SUPABASE =====
+        const SUPABASE_URL = 'https://gnlyqkvyltbnpqtbqzkn.supabase.co'; // https://xxx.supabase.co
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdubHlxa3Z5bHRibnBxdGJxemtuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjMxODY3NjEsImV4cCI6MjA3ODc2Mjc2MX0.ImWXF3Whbo8vaGyDDEx77t75eulh-zVVRJjyeKmHSVQ'; // eyJ...
+        const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        // Helper: Format score (0-100, bukan persentase)
+        function formatScore(score) {
+            return Math.round(score);
+        }
+
+        // Get statistics
+        async function getStatistics() {
+            try {
+                const { count: totalPeserta } = await supabase
+                    .from('invitation_codes')
+                    .select('*', { count: 'exact', head: true });
+
+                const { data: completed, count: countCompleted } = await supabase
+                    .from('test_sessions')
+                    .select('*', { count: 'exact' })
+                    .not('completed_at', 'is', null);
+
+                const pending = totalPeserta - countCompleted;
+
+                let avgScore = 0;
+                if (completed && completed.length > 0) {
+                    const total = completed.reduce((sum, item) => sum + item.score, 0);
+                    avgScore = total / completed.length;
+                }
+
+                document.getElementById('stat-total-peserta').textContent = totalPeserta || 0;
+                document.getElementById('stat-completed').textContent = countCompleted || 0;
+                document.getElementById('stat-pending').textContent = pending || 0;
+                document.getElementById('stat-average').textContent = formatScore(avgScore);
+
+            } catch (error) {
+                console.error('Error getting statistics:', error);
+            }
+        }
+
+        // Get Top 3 (Podium) - Sort by score, bukan by time
+        async function getPodium() {
+            try {
+                const { data, error } = await supabase
+                    .from('test_sessions')
+                    .select('*, invitation_codes!inner(code, participant_name)')
+                    .not('completed_at', 'is', null)
+                    .order('score', { ascending: false })
+                    .limit(3);
+
+                if (error) throw error;
+
+                const podiumContainer = document.getElementById('podium');
+
+                if (!data || data.length === 0) {
+                    podiumContainer.innerHTML = '<div class="empty-state">Belum ada peserta yang menyelesaikan tes</div>';
+                    return;
+                }
+
+                const trophies = ['🥇', '🥈', '🥉'];
+                const positions = ['first', 'second', 'third'];
+
+                let html = '';
+                data.forEach((session, index) => {
+                    const name = session.invitation_codes[0]?.participant_name || 'Anonymous';
+                    const score = formatScore(session.score);
+
+                    html += '<div class="podium-item ' + positions[index] + '">';
+                    html += '<div class="trophy">' + trophies[index] + '</div>';
+                    html += '<div class="name">' + name + '</div>';
+                    html += '<div class="score">' + score + ' poin</div>';
+                    html += '</div>';
+                });
+
+                podiumContainer.innerHTML = html;
+
+            } catch (error) {
+                console.error('Error getting podium:', error);
+                document.getElementById('podium').innerHTML = '<div class="empty-state">Error loading podium</div>';
+            }
+        }
+
+        // Get Top 10 Leaderboard - Sort by score, bukan by time
+        async function getLeaderboard() {
+            try {
+                const { data, error } = await supabase
+                    .from('test_sessions')
+                    .select('*, invitation_codes!inner(code, participant_name)')
+                    .not('completed_at', 'is', null)
+                    .order('score', { ascending: false })
+                    .limit(10);
+
+                if (error) throw error;
+
+                const leaderboardContainer = document.getElementById('leaderboard');
+
+                if (!data || data.length === 0) {
+                    leaderboardContainer.innerHTML = '<div class="empty-state">Belum ada peserta yang menyelesaikan tes</div>';
+                    return;
+                }
+
+                let html = '';
+                data.forEach((session, index) => {
+                    const name = session.invitation_codes[0]?.participant_name || 'Anonymous';
+                    const code = session.invitation_codes[0]?.code || '-';
+                    const score = formatScore(session.score);
+                    const correct = session.correct_answers || 0;
+                    const total = session.total_questions || 30;
+                    const completedAt = new Date(session.completed_at).toLocaleString('id-ID');
+
+                    html += '<div class="leaderboard-item">';
+                    html += '<div class="rank">#' + (index + 1) + '</div>';
+                    html += '<div class="name">' + name + '</div>';
+                    html += '<div class="score">' + score + '</div>';
+                    html += '<div class="details">' + correct + '/' + total + '</div>';
+                    html += '<div class="details">' + completedAt + '</div>';
+                    html += '</div>';
+                });
+
+                leaderboardContainer.innerHTML = html;
+
+            } catch (error) {
+                console.error('Error getting leaderboard:', error);
+                document.getElementById('leaderboard').innerHTML = '<div class="empty-state">Error loading leaderboard</div>';
+            }
+        }
+
+        // Load all data
+        async function loadAllData() {
+            await Promise.all([
+                getStatistics(),
+                getPodium(),
+                getLeaderboard()
+            ]);
+        }
+
+        // Initial load
+        loadAllData();
+
+        // Auto refresh setiap 10 detik
+        setInterval(loadAllData, 10000);
+    </script>
 </body>
 </html>
