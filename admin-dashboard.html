@@ -227,6 +227,12 @@
             background: #fafafa;
         }
 
+        /* HIGHLIGHT: Score < 60 dan status=completed */
+        .leaderboard-item.low-score {
+            background: #fee2e2;
+            box-shadow: inset 0 0 20px rgba(239, 68, 68, 0.15);
+        }
+
         .leaderboard-item.divider {
             background: #e5e7eb;
             padding: 10px 20px;
@@ -240,6 +246,10 @@
             font-weight: 700;
             color: #2563eb;
             font-size: 16px;
+        }
+
+        .leaderboard-item.low-score .rank {
+            color: #dc2626;
         }
 
         .name {
@@ -260,9 +270,20 @@
             color: #991b1b;
         }
 
+        /* Score < 60: Red background dengan shadow */
+        .leaderboard-item.low-score .score {
+            background: linear-gradient(135deg, #fecaca 0%, #fca5a5 100%);
+            color: #7f1d1d;
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+        }
+
         .details {
             color: #888;
             font-size: 13px;
+        }
+
+        .leaderboard-item.low-score .details {
+            color: #b91c1c;
         }
 
         .status-badge {
@@ -282,6 +303,11 @@
         .status-in-progress {
             background: #fef3c7;
             color: #92400e;
+        }
+
+        .leaderboard-item.low-score .status-completed {
+            background: #fecaca;
+            color: #991b1b;
         }
 
         .refresh-info {
@@ -340,7 +366,7 @@
             </div>
         </div>
 
-        <!-- Podium Top 3 - HANYA COMPLETED -->
+        <!-- Podium Top 3 -->
         <div class="podium-container">
             <h2 class="section-title">🏆 Podium Juara (Sudah Selesai)</h2>
             <div class="podium" id="podium">
@@ -348,14 +374,14 @@
             </div>
         </div>
 
-        <!-- Leaderboard - SORTED: Completed DULU, then In_Progress -->
+        <!-- Leaderboard -->
         <div>
             <h2 class="section-title">📈 Leaderboard Semua Peserta</h2>
             <div class="leaderboard" id="leaderboard">
                 <div class="loading">Loading...</div>
             </div>
             <div class="refresh-info">
-                ✓ Data diperbarui otomatis setiap 10 detik
+                ✓ Data diperbarui otomatis setiap 10 detik | 🔴 Warna merah = Score < 60
             </div>
         </div>
     </div>
@@ -363,77 +389,56 @@
     <script type="module">
         import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
 
-        // ===== CONFIG SUPABASE =====
         const SUPABASE_URL = 'https://gnlyqkvyltbnpqtbqzkn.supabase.co'; // https://xxx.supabase.co
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdubHlxa3Z5bHRibnBxdGJxemtuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjMxODY3NjEsImV4cCI6MjA3ODc2Mjc2MX0.ImWXF3Whbo8vaGyDDEx77t75eulh-zVVRJjyeKmHSVQ'; // eyJ...
        
         const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        // Format score (0-100)
         function formatScore(score) {
             return Math.round(score);
         }
 
-        // Get statistics - 5 STATS
         async function getStatistics() {
             try {
-                // 1. Total peserta dari invitation_codes
                 const { count: totalPeserta, error: err1 } = await supabase
                     .from('invitation_codes')
                     .select('*', { count: 'exact', head: true });
 
-                if (err1) {
-                    console.error('Error total peserta:', err1);
-                    return;
-                }
+                if (err1) return;
 
-                // 2. Peserta sudah selesai (status='completed')
                 const { data: completed, count: countCompleted, error: err2 } = await supabase
                     .from('test_sessions')
                     .select('score', { count: 'exact' })
                     .eq('status', 'completed');
 
-                if (err2) {
-                    console.error('Error completed:', err2);
-                    return;
-                }
+                if (err2) return;
 
-                // 3. Peserta sedang berlangsung (status='in_progress')
                 const { count: countInProgress, error: err3 } = await supabase
                     .from('test_sessions')
                     .select('*', { count: 'exact', head: true })
                     .eq('status', 'in_progress');
 
-                if (err3) {
-                    console.error('Error in_progress:', err3);
-                    return;
-                }
+                if (err3) return;
 
-                // 4. Hitung peserta belum mulai
                 const notStarted = (totalPeserta || 0) - (countCompleted || 0) - (countInProgress || 0);
 
-                // 5. Rata-rata score (hanya dari yang completed)
                 let avgScore = 0;
                 if (completed && completed.length > 0) {
                     const sum = completed.reduce((acc, item) => acc + (item.score || 0), 0);
                     avgScore = sum / completed.length;
                 }
 
-                // Update UI
                 document.getElementById('stat-total-peserta').textContent = totalPeserta || 0;
                 document.getElementById('stat-completed').textContent = countCompleted || 0;
                 document.getElementById('stat-in-progress').textContent = countInProgress || 0;
                 document.getElementById('stat-not-started').textContent = notStarted || 0;
                 document.getElementById('stat-average').textContent = formatScore(avgScore);
 
-                console.log('Stats:', { totalPeserta, countCompleted, countInProgress, notStarted, avgScore });
-
             } catch (error) {
-                console.error('Statistics exception:', error);
+                console.error('Statistics error:', error);
             }
         }
 
-        // Get Top 3 Podium - HANYA COMPLETED
         async function getPodium() {
             try {
                 const { data, error } = await supabase
@@ -444,7 +449,6 @@
                     .limit(3);
 
                 if (error) {
-                    console.error('Podium error:', error);
                     document.getElementById('podium').innerHTML = '<div class="empty-state">Error: ' + error.message + '</div>';
                     return;
                 }
@@ -474,21 +478,17 @@
                 podiumContainer.innerHTML = html;
 
             } catch (error) {
-                console.error('Podium exception:', error);
                 document.getElementById('podium').innerHTML = '<div class="empty-state">Error: ' + error.message + '</div>';
             }
         }
 
-        // Get Leaderboard - SORTED: completed DULU, then in_progress
         async function getLeaderboard() {
             try {
-                // Fetch ALL data
                 const { data, error } = await supabase
                     .from('test_sessions')
                     .select('id, participant_name, score, total_questions, start_time, status');
 
                 if (error) {
-                    console.error('Leaderboard error:', error);
                     document.getElementById('leaderboard').innerHTML = '<div class="empty-state">Error: ' + error.message + '</div>';
                     return;
                 }
@@ -498,7 +498,7 @@
                     return;
                 }
 
-                // SORT: Completed first (by score DESC), then In_Progress (by score DESC)
+                // SORT: completed first, then in_progress
                 const sortedData = data.sort((a, b) => {
                     const aCompleted = a.status === 'completed' ? 0 : 1;
                     const bCompleted = b.status === 'completed' ? 0 : 1;
@@ -520,12 +520,15 @@
                     const score = formatScore(session.score);
                     const time = new Date(session.start_time).toLocaleString('id-ID');
                     const isCompleted = session.status === 'completed';
-                    const statusClass = isCompleted ? '' : 'in-progress';
+                    const isLowScore = isCompleted && score < 60; // CHECK: score < 60 dan completed
+
+                    let statusClass = isLowScore ? 'low-score' : (isCompleted ? '' : 'in-progress');
+
                     const statusBadge = isCompleted ? 
                         '<span class="status-badge status-completed">Selesai</span>' :
                         '<span class="status-badge status-in-progress">Berlangsung</span>';
 
-                    // Divider between completed and in_progress
+                    // Divider
                     if (lastStatus !== session.status && lastStatus !== null) {
                         html += '<div class="leaderboard-item divider" style="grid-column: 1/-1;">';
                         html += '⏳ PESERTA YANG MASIH MENGERJAKAN';
@@ -546,12 +549,10 @@
                 leaderboardContainer.innerHTML = html;
 
             } catch (error) {
-                console.error('Leaderboard exception:', error);
                 document.getElementById('leaderboard').innerHTML = '<div class="empty-state">Error: ' + error.message + '</div>';
             }
         }
 
-        // Load all data
         async function loadAllData() {
             await Promise.all([
                 getStatistics(),
@@ -560,10 +561,7 @@
             ]);
         }
 
-        // Initial load
         loadAllData();
-
-        // Auto refresh setiap 10 detik
         setInterval(loadAllData, 10000);
     </script>
 </body>
