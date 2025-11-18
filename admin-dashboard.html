@@ -42,14 +42,14 @@
 
         .grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 25px;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
             margin-bottom: 40px;
         }
 
         .stat-card {
             background: white;
-            padding: 25px;
+            padding: 20px;
             border-radius: 12px;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
             border-left: 4px solid #2563eb;
@@ -63,26 +63,33 @@
 
         .stat-card h3 {
             color: #666;
-            font-size: 13px;
-            margin-bottom: 12px;
+            font-size: 11px;
+            margin-bottom: 10px;
             text-transform: uppercase;
             letter-spacing: 0.5px;
             font-weight: 600;
         }
 
         .stat-card .value {
-            font-size: 36px;
+            font-size: 32px;
             font-weight: 700;
             color: #2563eb;
-            margin-bottom: 8px;
+            margin-bottom: 5px;
         }
 
         .stat-card .label {
-            font-size: 12px;
+            font-size: 11px;
             color: #999;
         }
 
-        /* Color variants */
+        .stat-card.total {
+            border-left-color: #2563eb;
+        }
+
+        .stat-card.total .value {
+            color: #2563eb;
+        }
+
         .stat-card.completed {
             border-left-color: #10b981;
         }
@@ -91,12 +98,20 @@
             color: #10b981;
         }
 
-        .stat-card.pending {
+        .stat-card.in-progress {
             border-left-color: #f59e0b;
         }
 
-        .stat-card.pending .value {
+        .stat-card.in-progress .value {
             color: #f59e0b;
+        }
+
+        .stat-card.not-started {
+            border-left-color: #ef4444;
+        }
+
+        .stat-card.not-started .value {
+            color: #ef4444;
         }
 
         .stat-card.average {
@@ -207,6 +222,20 @@
             background: #f9fafb;
         }
 
+        .leaderboard-item.in-progress {
+            opacity: 0.7;
+            background: #fafafa;
+        }
+
+        .leaderboard-item.divider {
+            background: #e5e7eb;
+            padding: 10px 20px;
+            font-weight: 600;
+            color: #666;
+            font-size: 12px;
+            border: none;
+        }
+
         .rank {
             font-weight: 700;
             color: #2563eb;
@@ -226,9 +255,33 @@
             text-align: center;
         }
 
+        .leaderboard-item.in-progress .score {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
         .details {
             color: #888;
             font-size: 13px;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-left: 5px;
+        }
+
+        .status-completed {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .status-in-progress {
+            background: #fef3c7;
+            color: #92400e;
         }
 
         .refresh-info {
@@ -258,9 +311,9 @@
     </div>
 
     <div class="container">
-        <!-- Statistics - 4 Cards -->
+        <!-- Statistics - 5 Cards -->
         <div class="grid">
-            <div class="stat-card">
+            <div class="stat-card total">
                 <h3>👥 Total Peserta</h3>
                 <div class="value" id="stat-total-peserta">-</div>
                 <div class="label">Dari invitation codes</div>
@@ -268,12 +321,17 @@
             <div class="stat-card completed">
                 <h3>✅ Sudah Selesai</h3>
                 <div class="value" id="stat-completed">-</div>
-                <div class="label">Menyelesaikan test</div>
+                <div class="label">Status: completed</div>
             </div>
-            <div class="stat-card pending">
-                <h3>⏳ Belum Selesai</h3>
-                <div class="value" id="stat-pending">-</div>
-                <div class="label">Masih menunggu</div>
+            <div class="stat-card in-progress">
+                <h3>⏳ Sedang Berlangsung</h3>
+                <div class="value" id="stat-in-progress">-</div>
+                <div class="label">Status: in_progress</div>
+            </div>
+            <div class="stat-card not-started">
+                <h3>❌ Belum Mulai</h3>
+                <div class="value" id="stat-not-started">-</div>
+                <div class="label">Total - Selesai - Berlangsung</div>
             </div>
             <div class="stat-card average">
                 <h3>📈 Rata-rata Score</h3>
@@ -282,17 +340,17 @@
             </div>
         </div>
 
-        <!-- Podium Top 3 -->
+        <!-- Podium Top 3 - HANYA COMPLETED -->
         <div class="podium-container">
-            <h2 class="section-title">🏆 Podium Juara</h2>
+            <h2 class="section-title">🏆 Podium Juara (Sudah Selesai)</h2>
             <div class="podium" id="podium">
                 <div class="loading">Loading...</div>
             </div>
         </div>
 
-        <!-- Top 10 Leaderboard -->
+        <!-- Leaderboard - SORTED: Completed DULU, then In_Progress -->
         <div>
-            <h2 class="section-title">📈 Top 10 Leaderboard</h2>
+            <h2 class="section-title">📈 Leaderboard Semua Peserta</h2>
             <div class="leaderboard" id="leaderboard">
                 <div class="loading">Loading...</div>
             </div>
@@ -316,7 +374,7 @@
             return Math.round(score);
         }
 
-        // Get statistics
+        // Get statistics - 5 STATS
         async function getStatistics() {
             try {
                 // 1. Total peserta dari invitation_codes
@@ -329,20 +387,32 @@
                     return;
                 }
 
-                // 2. Peserta sudah selesai dari test_sessions
+                // 2. Peserta sudah selesai (status='completed')
                 const { data: completed, count: countCompleted, error: err2 } = await supabase
                     .from('test_sessions')
-                    .select('score', { count: 'exact' });
+                    .select('score', { count: 'exact' })
+                    .eq('status', 'completed');
 
                 if (err2) {
                     console.error('Error completed:', err2);
                     return;
                 }
 
-                // 3. Hitung peserta belum selesai
-                const pending = (totalPeserta || 0) - (countCompleted || 0);
+                // 3. Peserta sedang berlangsung (status='in_progress')
+                const { count: countInProgress, error: err3 } = await supabase
+                    .from('test_sessions')
+                    .select('*', { count: 'exact', head: true })
+                    .eq('status', 'in_progress');
 
-                // 4. Rata-rata score
+                if (err3) {
+                    console.error('Error in_progress:', err3);
+                    return;
+                }
+
+                // 4. Hitung peserta belum mulai
+                const notStarted = (totalPeserta || 0) - (countCompleted || 0) - (countInProgress || 0);
+
+                // 5. Rata-rata score (hanya dari yang completed)
                 let avgScore = 0;
                 if (completed && completed.length > 0) {
                     const sum = completed.reduce((acc, item) => acc + (item.score || 0), 0);
@@ -352,22 +422,24 @@
                 // Update UI
                 document.getElementById('stat-total-peserta').textContent = totalPeserta || 0;
                 document.getElementById('stat-completed').textContent = countCompleted || 0;
-                document.getElementById('stat-pending').textContent = pending || 0;
+                document.getElementById('stat-in-progress').textContent = countInProgress || 0;
+                document.getElementById('stat-not-started').textContent = notStarted || 0;
                 document.getElementById('stat-average').textContent = formatScore(avgScore);
 
-                console.log('Stats:', { totalPeserta, countCompleted, pending, avgScore });
+                console.log('Stats:', { totalPeserta, countCompleted, countInProgress, notStarted, avgScore });
 
             } catch (error) {
                 console.error('Statistics exception:', error);
             }
         }
 
-        // Get Top 3 Podium
+        // Get Top 3 Podium - HANYA COMPLETED
         async function getPodium() {
             try {
                 const { data, error } = await supabase
                     .from('test_sessions')
                     .select('id, participant_name, score')
+                    .eq('status', 'completed')
                     .order('score', { ascending: false })
                     .limit(3);
 
@@ -380,7 +452,7 @@
                 const podiumContainer = document.getElementById('podium');
 
                 if (!data || data.length === 0) {
-                    podiumContainer.innerHTML = '<div class="empty-state">Belum ada data test</div>';
+                    podiumContainer.innerHTML = '<div class="empty-state">Belum ada peserta yang menyelesaikan tes</div>';
                     return;
                 }
 
@@ -407,14 +479,13 @@
             }
         }
 
-        // Get Top 10 Leaderboard
+        // Get Leaderboard - SORTED: completed DULU, then in_progress
         async function getLeaderboard() {
             try {
+                // Fetch ALL data
                 const { data, error } = await supabase
                     .from('test_sessions')
-                    .select('id, participant_name, score, total_questions, start_time')
-                    .order('score', { ascending: false })
-                    .limit(10);
+                    .select('id, participant_name, score, total_questions, start_time, status');
 
                 if (error) {
                     console.error('Leaderboard error:', error);
@@ -422,26 +493,54 @@
                     return;
                 }
 
-                const leaderboardContainer = document.getElementById('leaderboard');
-
                 if (!data || data.length === 0) {
-                    leaderboardContainer.innerHTML = '<div class="empty-state">Belum ada data test</div>';
+                    document.getElementById('leaderboard').innerHTML = '<div class="empty-state">Belum ada data peserta</div>';
                     return;
                 }
 
+                // SORT: Completed first (by score DESC), then In_Progress (by score DESC)
+                const sortedData = data.sort((a, b) => {
+                    const aCompleted = a.status === 'completed' ? 0 : 1;
+                    const bCompleted = b.status === 'completed' ? 0 : 1;
+
+                    if (aCompleted !== bCompleted) {
+                        return aCompleted - bCompleted;
+                    }
+
+                    return (b.score || 0) - (a.score || 0);
+                });
+
+                const leaderboardContainer = document.getElementById('leaderboard');
+
                 let html = '';
-                data.forEach((session, index) => {
+                let lastStatus = null;
+
+                sortedData.forEach((session, index) => {
                     const name = session.participant_name || 'Anonymous';
                     const score = formatScore(session.score);
                     const time = new Date(session.start_time).toLocaleString('id-ID');
+                    const isCompleted = session.status === 'completed';
+                    const statusClass = isCompleted ? '' : 'in-progress';
+                    const statusBadge = isCompleted ? 
+                        '<span class="status-badge status-completed">Selesai</span>' :
+                        '<span class="status-badge status-in-progress">Berlangsung</span>';
 
-                    html += '<div class="leaderboard-item">';
+                    // Divider between completed and in_progress
+                    if (lastStatus !== session.status && lastStatus !== null) {
+                        html += '<div class="leaderboard-item divider" style="grid-column: 1/-1;">';
+                        html += '⏳ PESERTA YANG MASIH MENGERJAKAN';
+                        html += '</div>';
+                    }
+
+                    html += '<div class="leaderboard-item ' + statusClass + '">';
                     html += '<div class="rank">#' + (index + 1) + '</div>';
-                    html += '<div class="name">' + name + '</div>';
+                    html += '<div class="name">' + name + statusBadge + '</div>';
                     html += '<div class="score">' + score + '</div>';
                     html += '<div class="details">/100</div>';
                     html += '<div class="details">' + time + '</div>';
                     html += '</div>';
+
+                    lastStatus = session.status;
                 });
 
                 leaderboardContainer.innerHTML = html;
