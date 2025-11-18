@@ -3,157 +3,306 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portal Tes - BPS</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>Portal Tes Akademik - Login</title>
     <style>
-        .locked-message {
-            background: #fee2e2;
-            border: 2px solid #ef4444;
-            border-radius: 12px;
-            padding: 30px;
-            text-align: center;
-            max-width: 500px;
-            margin: 50px auto;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
-        .locked-message .lock-icon {
-            font-size: 64px;
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f7fa;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .header h1 {
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 60px auto;
+            padding: 0 20px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 40px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        .card h2 {
+            font-size: 24px;
+            color: #333;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .form-group {
             margin-bottom: 20px;
         }
 
-        .locked-message h2 {
-            color: #991b1b;
-            font-size: 24px;
-            margin-bottom: 15px;
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+            font-size: 14px;
         }
 
-        .locked-message p {
-            color: #7f1d1d;
-            margin-bottom: 10px;
-            font-size: 16px;
-        }
-
-        .countdown-display {
-            background: white;
-            border: 2px solid #ef4444;
+        .form-group input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e5e7eb;
             border-radius: 8px;
-            padding: 20px;
-            margin: 20px auto;
-            font-size: 32px;
-            font-weight: bold;
-            color: #ef4444;
-            font-family: 'Courier New', monospace;
-            max-width: 400px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #2563eb;
+            background: #f9fafb;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 30px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(37, 99, 235, 0.3);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .spinner {
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top: 2px solid white;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .alert {
+            padding: 14px 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .alert-error {
+            background: #fee2e2;
+            color: #991b1b;
+            border-left: 4px solid #dc2626;
+        }
+
+        .alert-success {
+            background: #dcfce7;
+            color: #166534;
+            border-left: 4px solid #16a34a;
+        }
+
+        #alertContainer {
+            min-height: 0;
+            margin-bottom: 0;
         }
     </style>
 </head>
-<body style="background-color: #f9fafb;">
-    <div id="locked-container" style="display: none;">
-        <div class="locked-message">
-            <div class="lock-icon">🔐</div>
-            <h2>Portal Tes Belum Dibuka</h2>
-            <p>Maaf, test akademik belum dimulai.</p>
-            <p>Waktu pembukaan:</p>
-            <div class="countdown-display" id="countdown">--:--:--</div>
-            <p style="margin-top: 20px; font-size: 14px;">
-                <strong id="launch-time">18 November 2025 - 09:00 WIT</strong>
-            </p>
-            <p style="margin-top: 20px; font-size: 13px; color: #9ca3af;">
-                Silakan kembali lagi pada waktu yang ditentukan.
-            </p>
+<body>
+    <div class="header">
+        <h1>Portal Tes Akademik</h1>
+        <p>BPS Kabupaten Maluku Barat Daya</p>
+    </div>
+
+    <div class="container">
+        <div class="card">
+            <h2>Login untuk Mengerjakan Tes</h2>
+
+            <div id="alertContainer"></div>
+
+            <form id="accessForm">
+                <div class="form-group">
+                    <label for="invitationCode">Kode Undangan:</label>
+                    <input 
+                        type="text" 
+                        id="invitationCode" 
+                        placeholder="MITRA-ABC"
+                        required
+                        autocomplete="off"
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="participantName">Nama Lengkap:</label>
+                    <input 
+                        type="text" 
+                        id="participantName" 
+                        placeholder="Nama Anda"
+                        required
+                        autocomplete="off"
+                    >
+                </div>
+
+                <button type="submit" class="btn" id="submitBtn">
+                    <span id="btnText">Mulai Tes</span>
+                    <div id="btnSpinner" class="spinner hidden"></div>
+                </button>
+            </form>
         </div>
     </div>
 
-    <div id="portal-container">
-        <!-- ISI PORTAL TEST ASLI -->
-        <div class="dashboard-header">
-            <div class="container">
-                <h1 class="dashboard-title">Portal Tes Akademik</h1>
-                <p class="dashboard-subtitle">BPS Kabupaten Maluku Barat Daya</p>
-            </div>
-        </div>
+    <script type="module">
+        import { supabase } from './supabase-config.js';
 
-        <div class="container" style="padding: 40px 20px; max-width: 600px; margin: 0 auto;">
-            <div style="background: white; padding: 40px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
-                <h2 style="font-size: 24px; margin-bottom: 30px; text-align: center;">Login untuk Mengerjakan Tes</h2>
+        const form = document.getElementById('accessForm');
+        const alertContainer = document.getElementById('alertContainer');
+        const btnText = document.getElementById('btnText');
+        const btnSpinner = document.getElementById('btnSpinner');
+        const submitBtn = document.getElementById('submitBtn');
 
-                <form id="testForm">
-                    <div style="margin-bottom: 20px;">
-                        <label for="code" style="display: block; margin-bottom: 8px; font-weight: 600;">Kode Undangan:</label>
-                        <input type="text" id="code" placeholder="MITRA-ABC" required style="width: 100%; padding: 12px; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 16px;">
-                    </div>
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
 
-                    <div style="margin-bottom: 20px;">
-                        <label for="name" style="display: block; margin-bottom: 8px; font-weight: 600;">Nama Lengkap:</label>
-                        <input type="text" id="name" placeholder="Nama Anda" required style="width: 100%; padding: 12px; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 16px;">
-                    </div>
+            const invitationCode = document.getElementById('invitationCode').value.trim().toUpperCase();
+            const participantName = document.getElementById('participantName').value.trim();
 
-                    <button type="submit" style="width: 100%; padding: 14px; background: #2563eb; color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; margin-top: 20px;">
-                        Mulai Tes
-                    </button>
-                </form>
-            </div>
-        </div>
-    </div>
+            // Show loading state
+            btnText.textContent = 'Memverifikasi...';
+            btnSpinner.classList.remove('hidden');
+            submitBtn.disabled = true;
 
-    <script>
-        // ===== KONFIGURASI JADWAL =====
-        // UBAH INI SESUAI JAM PEMBUKAAN TEST ANDA!
-        const LAUNCH_TIME = new Date('2025-11-18T08:00:00+08:00');
+            try {
+                // Check if invitation code exists and is not used
+                const { data: codeData, error: codeError } = await supabase
+                    .from('invitation_codes')
+                    .select('*')
+                    .eq('code', invitationCode)
+                    .single();
 
-        // Function untuk check apakah sudah waktunya
-        function checkSchedule() {
-            const now = new Date();
-            const lockedContainer = document.getElementById('locked-container');
-            const portalContainer = document.getElementById('portal-container');
+                if (codeError || !codeData) {
+                    showAlert('Kode undangan tidak valid!', 'error');
+                    resetButton();
+                    return;
+                }
 
-            if (now < LAUNCH_TIME) {
-                // Belum waktunya - tampilkan pesan terkunci
-                lockedContainer.style.display = 'block';
-                portalContainer.style.display = 'none';
-                updateCountdown();
-                setInterval(updateCountdown, 1000);
-            } else {
-                // Sudah waktunya - tampilkan portal
-                lockedContainer.style.display = 'none';
-                portalContainer.style.display = 'block';
-                setupPortal();
+                if (codeData.is_used) {
+                    showAlert('Kode undangan sudah digunakan!', 'error');
+                    resetButton();
+                    return;
+                }
+
+                // Mark code as used
+                const { error: updateError } = await supabase
+                    .from('invitation_codes')
+                    .update({ 
+                        is_used: true, 
+                        used_at: new Date().toISOString(),
+                        participant_name: participantName 
+                    })
+                    .eq('code', invitationCode);
+
+                if (updateError) {
+                    showAlert('Terjadi kesalahan. Silakan coba lagi.', 'error');
+                    resetButton();
+                    return;
+                }
+
+                // Create test session
+                const { data: sessionData, error: sessionError } = await supabase
+                    .from('test_sessions')
+                    .insert([{
+                        invitation_code: invitationCode,
+                        participant_name: participantName,
+                        start_time: new Date().toISOString(),
+                        status: 'in_progress'
+                    }])
+                    .select()
+                    .single();
+
+                if (sessionError) {
+                    showAlert('Gagal membuat sesi tes. Silakan coba lagi.', 'error');
+                    resetButton();
+                    return;
+                }
+
+                // Store session info in sessionStorage
+                sessionStorage.setItem('testSession', JSON.stringify({
+                    sessionId: sessionData.id,
+                    invitationCode: invitationCode,
+                    participantName: participantName,
+                    startTime: new Date().toISOString()
+                }));
+
+                // Redirect to test interface
+                showAlert('Verifikasi berhasil! Mengarahkan ke tes...', 'success');
+                setTimeout(() => {
+                    window.location.href = 'test-interface.html';
+                }, 1500);
+
+            } catch (error) {
+                console.error('Error:', error);
+                showAlert('Terjadi kesalahan: ' + error.message, 'error');
+                resetButton();
             }
+        });
+
+        function showAlert(message, type) {
+            alertContainer.innerHTML = `
+                <div class="alert alert-${type}">
+                    ${message}
+                </div>
+            `;
         }
 
-        // Update countdown timer
-        function updateCountdown() {
-            const now = new Date();
-            const diff = LAUNCH_TIME - now;
-
-            if (diff <= 0) {
-                // Waktu sudah tercapai, reload halaman
-                location.reload();
-                return;
-            }
-
-            const hours = Math.floor(diff / (1000 * 60 * 60));
-            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-
-            const countdownEl = document.getElementById('countdown');
-            countdownEl.textContent = 
-                String(hours).padStart(2, '0') + ':' +
-                String(minutes).padStart(2, '0') + ':' +
-                String(seconds).padStart(2, '0');
+        function resetButton() {
+            btnText.textContent = 'Mulai Tes';
+            btnSpinner.classList.add('hidden');
+            submitBtn.disabled = false;
         }
-
-        // Setup portal (kode original)
-        function setupPortal() {
-            // Masukkan kode asli dari test-portal.js di sini
-            // Atau import dari file terpisah
-        }
-
-        // Jalankan schedule check saat halaman load
-        document.addEventListener('DOMContentLoaded', checkSchedule);
     </script>
-
-    <!-- SCRIPT PORTAL ASLI -->
-    <script type="module" src="test-portal.js"></script>
 </body>
 </html>
